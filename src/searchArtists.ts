@@ -22,7 +22,7 @@ export const parseArtistsSearchBody = (body: any): ArtistPreview[] => {
   return results;
 };
 
-export async function searchArtists(
+export async function SearchForArtists(
   query: string,
   options?: {
     lang?: string;

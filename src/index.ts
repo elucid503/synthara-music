@@ -1,12 +1,12 @@
 export * from './models.js';
 
-export { searchMusics } from './searchMusics.js';
-export { searchAlbums } from './searchAlbums.js';
-export { searchPlaylists } from './searchPlaylists.js';
-export { getSuggestions } from './suggestions.js';
+export { SearchForMusicVideos } from './searchMusics.js';
+export { SearchForAlbum } from './searchAlbums.js';
+export { SearchForPlaylists } from './searchPlaylists.js';
+export { GetMusicVideoBasedSuggestions } from './suggestions.js';
 
-export { listMusicsFromAlbum } from './listMusicsFromAlbum.js';
-export { listMusicsFromPlaylist } from './listMusicsFromPlaylist.js';
+export { ListMusicVideosFromAlbum } from './listMusicsFromAlbum.js';
+export { ListMusicVideosFromPlaylist } from './listMusicsFromPlaylist.js';
 
-export { searchArtists } from './searchArtists.js';
-export { getArtist } from './getArtist.js';
+export { SearchForArtists } from './searchArtists.js';
+export { GetArtist } from './getArtist.js';

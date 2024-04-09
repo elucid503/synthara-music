@@ -31,7 +31,7 @@ export const parseSearchPlaylistsBody = (
   return results;
 };
 
-export async function searchPlaylists(
+export async function SearchForPlaylists(
   query: string,
   options?: {
     onlyOfficialPlaylists?: boolean;

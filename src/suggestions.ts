@@ -42,7 +42,7 @@ export const parseGetSuggestionsBody = (body: {
   return results;
 };
 
-export async function getSuggestions(videoId: string): Promise<MusicVideo[]> {
+export async function GetMusicVideoBasedSuggestions(videoId: string): Promise<MusicVideo[]> {
   const response = await fetch(
     `https://music.youtube.com/youtubei/v1/next?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL`,
     {

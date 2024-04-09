@@ -26,7 +26,7 @@ export const parseListMusicsFromAlbumBody = (body: any): MusicVideo[] => {
   return songs;
 };
 
-export async function listMusicsFromAlbum(
+export async function ListMusicVideosFromAlbum(
   albumId: string
 ): Promise<MusicVideo[]> {
   const response = await fetch(

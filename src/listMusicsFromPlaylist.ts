@@ -42,7 +42,7 @@ export const parseListMusicsFromPlaylistBody = (body: {
   return results;
 };
 
-export async function listMusicsFromPlaylist(
+export async function ListMusicVideosFromPlaylist(
   playlistId: string
 ): Promise<MusicVideo[]> {
   let browseId;

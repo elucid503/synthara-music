@@ -25,7 +25,7 @@ export const parseSearchMusicsBody = (body: {
   return results;
 };
 
-export async function searchMusics(query: string): Promise<MusicVideo[]> {
+export async function SearchForMusicVideos(query: string): Promise<MusicVideo[]> {
   const response = await fetch(
     'https://music.youtube.com/youtubei/v1/search?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
     {

@@ -23,7 +23,7 @@ export const parseSearchAlbumsBody = (body: any): AlbumPreview[] => {
   return results;
 };
 
-export async function searchAlbums(query: string): Promise<AlbumPreview[]> {
+export async function SearchForAlbum(query: string): Promise<AlbumPreview[]> {
   const response = await fetch(
     'https://music.youtube.com/youtubei/v1/search?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
     {

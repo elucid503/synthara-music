@@ -3,7 +3,7 @@ import context from './context.js';
 import { Artist } from './models.js';
 import { parseArtistData } from './parsers.js';
 
-export async function getArtist(
+export async function GetArtist(
   artistId: string,
   options?: {
     lang: string;
