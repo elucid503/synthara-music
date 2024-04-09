@@ -1,3 +1,55 @@
+export interface SearchSuggestion {
+
+  query: string;
+
+  runs: {
+
+      text: string;
+      bold?: boolean;
+
+  }[];
+  
+}
+
+export interface SuggestedTrack {
+
+  videoId: string;
+  title: string;
+  artists: string[];
+  duration: string;
+
+  thumbnails: {
+
+      url: string;
+      width: number;
+      height: number;
+
+  }[];
+
+  params: string;
+  playerParams: string;
+  album?: string;
+  views?: string;
+
+}
+
+export interface SuggestedAlbum {
+
+  browseId: string;
+  title: string;
+
+  thumbnails: {
+
+      url: string;
+      width: number;
+      height: number;
+
+  }[];
+
+  year?: string;
+
+}
+
 export enum AccountType {
   REGULAR = 'regular',
   VERIFIED_ARTIST = 'BADGE_STYLE_TYPE_VERIFIED_ARTIST',

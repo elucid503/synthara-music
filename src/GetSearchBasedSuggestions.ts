@@ -1,56 +1,5 @@
 import fetch from "node-fetch";
-
-export interface SearchSuggestion {
-
-    query: string;
-
-    runs: {
-
-        text: string;
-        bold?: boolean;
-
-    }[];
-    
-}
-
-export interface SuggestedTrack {
-
-    videoId: string;
-    title: string;
-    artists: string[];
-    duration: string;
-
-    thumbnails: {
-
-        url: string;
-        width: number;
-        height: number;
-
-    }[];
-
-    params: string;
-    playerParams: string;
-    album?: string;
-    views?: string;
-
-}
-
-interface SuggestedAlbum {
-
-    browseId: string;
-    title: string;
-
-    thumbnails: {
-
-        url: string;
-        width: number;
-        height: number;
-
-    }[];
-
-    year?: string;
-
-}
+import { SearchSuggestion, SuggestedTrack, SuggestedAlbum } from "./models.js";
 
 export function ParseSearchSuggestionsResponse(responseData: any): { Suggestions: SearchSuggestion[]; Tracks: SuggestedTrack[]; Albums: SuggestedAlbum[] } {
  
