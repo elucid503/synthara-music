@@ -6,7 +6,8 @@ export { SearchForPlaylists } from './searchPlaylists.js';
 
 export { GetMusicVideoBasedSuggestions } from './suggestions.js';
 export { GetSearchBasedSuggestions } from "./GetSearchBasedSuggestions.js";
-
+export { GetTailoredSuggestionsWithPriority } from "./tailoredsuggestions.js";
+ 
 export { ListMusicVideosFromAlbum } from './listMusicsFromAlbum.js';
 export { ListMusicVideosFromPlaylist } from './listMusicsFromPlaylist.js';
 
