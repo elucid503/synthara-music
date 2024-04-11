@@ -1,8 +1,36 @@
-import { GetSearchBasedSuggestions } from "./src/GetSearchBasedSuggestions";
+import { GetTailoredSuggestionsWithPriority } from "./src/tailoredsuggestions";
 import util from "util";
 
-const input = "am i dreaming";
+const Seeds = [
 
-GetSearchBasedSuggestions(input, {}).then((response) => {
-  console.log(util.inspect(response, false, null, true /* enable colors */));
+  {
+
+    VideoID: "XDMg06hw97U", // Self Love 
+
+    Skipped: false
+
+  },
+
+  // {
+
+  //   VideoID: "yRVotpLaCD4", // Weeknd
+
+  //   Skipped: true
+
+  // },
+
+  // {
+
+  //   VideoID: "3whRyV5XnmE", // Another 
+
+  //   Skipped: false
+
+  // }
+
+];
+
+GetTailoredSuggestionsWithPriority(Seeds).then((results) => {
+
+  console.log(util.inspect(results, false, null, true));
+
 });

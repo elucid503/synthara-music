@@ -26,7 +26,7 @@ const parseGetSuggestionsBody = (body: {
     body.contents.singleColumnMusicWatchNextResultsRenderer.tabbedRenderer
       .watchNextTabbedResultsRenderer.tabs[0].tabRenderer.content
       .musicQueueRenderer.content.playlistPanelRenderer;
-
+  
   const results: MusicVideo[] = [];
 
   contents.forEach((content: any) => {
@@ -83,8 +83,14 @@ export async function GetTailoredSuggestionsWithPriority(Seeds: { VideoID: strin
           params: 'mgMDCNgE',
           playerParams: 'igMDCNgE',
           tunerSettingValue: 'AUTOMIX_SETTING_NORMAL',
-          videoId: Seeds[Seeds.length - 1].VideoID,
+          playlistId: `RDAMVM${Seeds.map(Seed => Seed.VideoID).join('')}`,
           responsiveSignals,
+          watchEndpointMusicSupportedConfigs: {
+            watchEndpointMusicConfig: {
+                hasPersistentPlaylistPanel: true,
+                musicVideoType: "MUSIC_VIDEO_TYPE_OMV"
+            }
+          },          
         }),
         headers: {
           'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
@@ -93,8 +99,8 @@ export async function GetTailoredSuggestionsWithPriority(Seeds: { VideoID: strin
       }
     );
   
-    try {
-
+  try {
+      
         return parseGetSuggestionsBody(await response.json() as any);
         
     } catch {
