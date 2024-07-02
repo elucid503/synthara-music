@@ -35,7 +35,7 @@ export async function SearchForMusicVideos(query: string, proxy?: { Host: string
   try {
       
     response = await Axios.post(
-      'https://music.youtube.com/youtubei/v1/search?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
+      'https://music.youtube.com/youtubei/v1/search?alt=json',
       {
         ...context.body,
         params: 'EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D',
@@ -56,10 +56,9 @@ export async function SearchForMusicVideos(query: string, proxy?: { Host: string
     return [];
 
   }
-  
-  console.log(response.status);
-  console.log(inspect(response.data, false, 100, true));
 
+  console.log(inspect(response.data, false, 100, true));
+  
   try {
     return parseSearchMusicsBody(response.data as any);
   } catch {
