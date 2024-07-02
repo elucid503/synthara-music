@@ -33,6 +33,6 @@
     "axios": "^1.7.2",
     "https-proxy-agent": "^7.0.5",
     "node-fetch": "^3.3.2",
-    "ytmusic-api": "^5.2.1"
+    "ytmusic_api_unofficial": "^2.0.0-beta.1.6.10"
   }
 }
