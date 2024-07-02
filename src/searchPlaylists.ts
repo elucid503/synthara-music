@@ -1,4 +1,5 @@
-import fetch from 'node-fetch';
+import got from 'got';
+import { HttpsProxyAgent } from 'hpagent';
 import context from './context.js';
 import { PlaylistPreview } from './models.js';
 import { parsePlaylistItem } from './parsers.js';
@@ -10,14 +11,10 @@ export const parseSearchPlaylistsBody = (
   const contents =
     body.contents.tabbedSearchResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents.pop()
       .musicShelfRenderer?.contents;
-
   if (!contents) {
     return [];
   }
-
-
   const results: PlaylistPreview[] = [];
-
   contents.forEach((content: any) => {
     try {
       const playlist = parsePlaylistItem(content, onlyOfficialPlaylists);
@@ -35,27 +32,41 @@ export async function SearchForPlaylists(
   query: string,
   options?: {
     onlyOfficialPlaylists?: boolean;
+    proxy: { Host: string; Port: number; UserPass?: string } | undefined
   }
 ): Promise<PlaylistPreview[]> {
-  const response = await fetch(
-    'https://music.youtube.com/youtubei/v1/search?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
+  const response = await got.post(
+    'https://music.youtube.com/youtubei/v1/search',
     {
-      method: 'POST',
-      body: JSON.stringify({
+      json: {
         ...context.body,
         params: 'EgWKAQIoAWoKEAoQAxAEEAUQCQ%3D%3D',
         query,
-      }),
+      },
+      searchParams: {
+        alt: 'json',
+        key: 'AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
+      },
       headers: {
         'User-Agent':
           'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
         origin: 'https://music.youtube.com',
       },
+      agent: options?.proxy
+        ? {
+            https: new HttpsProxyAgent({
+              proxy: `http://${
+                options.proxy.UserPass ? options.proxy.UserPass + '@' : ''
+              }${options.proxy.Host}:${options.proxy.Port}`,
+            }),
+          }
+        : undefined,
     }
   );
+
   try {
     return parseSearchPlaylistsBody(
-      await response.json(),
+      JSON.parse(response.body),
       options?.onlyOfficialPlaylists ?? false
     );
   } catch (e) {

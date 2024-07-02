@@ -1,4 +1,6 @@
-import fetch from 'node-fetch';
+import got from 'got';
+import { HttpsProxyAgent } from 'hpagent';
+
 import { MusicVideo } from './models.js';
 import { parseSuggestionItem } from './parsers.js';
 import context from './context.js';
@@ -42,12 +44,11 @@ export const parseGetSuggestionsBody = (body: {
   return results;
 };
 
-export async function GetMusicVideoBasedSuggestions(videoId: string): Promise<MusicVideo[]> {
-  const response = await fetch(
-    `https://music.youtube.com/youtubei/v1/next?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL`,
+export async function GetMusicVideoBasedSuggestions(videoId: string, proxy: { Host: string, Port: number, UserPass?: string } | undefined): Promise<MusicVideo[]> {
+  const response = await got.post(
+    'https://music.youtube.com/youtubei/v1/next',
     {
-      method: "POST",
-      body: JSON.stringify({
+      json: {
         ...context.body,
         enablePersistentPlaylistPanel: true,
         isAudioOnly: true,
@@ -56,16 +57,23 @@ export async function GetMusicVideoBasedSuggestions(videoId: string): Promise<Mu
         tunerSettingValue: 'AUTOMIX_SETTING_NORMAL',
         playlistId: `RDAMVM${videoId}`,
         videoId,
-      }),
+      },
+      searchParams: {
+        alt: 'json',
+        key: 'AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
+      },
       headers: {
         'User-Agent':
           'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
         origin: 'https://music.youtube.com',
       },
+      agent: proxy ? {
+        https: new HttpsProxyAgent({ proxy: `http://${proxy.UserPass ? proxy.UserPass + '@' : ''}${proxy.Host}:${proxy.Port}` })
+      } : undefined
     }
   );
   try {
-    return parseGetSuggestionsBody(await response.json() as any);
+    return parseGetSuggestionsBody(JSON.parse(response.body));
   } catch {
     return [];
   }

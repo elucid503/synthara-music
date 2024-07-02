@@ -25,7 +25,7 @@ export const parseSearchMusicsBody = (body: {
   return results;
 };
 
-export async function SearchForMusicVideos(query: string, proxy?: { Host: string, Port: number, UserPass?: string }): Promise<MusicVideo[]> {
+export async function SearchForMusicVideos(query: string, proxy: { Host: string, Port: number, UserPass?: string } | undefined): Promise<MusicVideo[]> {
   const url = 'https://music.youtube.com/youtubei/v1/search?alt=json';
   const body = {
     ...context.body,
@@ -55,10 +55,7 @@ export async function SearchForMusicVideos(query: string, proxy?: { Host: string
   }
 
   try {
-    const response = await got(url, options);
-
-    console.log(response);
-    
+    const response = await got(url, options);    
     return parseSearchMusicsBody(response.body as any);
   } catch (error) {
     console.error('Error fetching data:', error);

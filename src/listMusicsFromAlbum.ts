@@ -1,4 +1,5 @@
-import fetch from 'node-fetch';
+import got from 'got';
+import { HttpsProxyAgent } from 'hpagent';
 import context from './context.js';
 import { MusicVideo } from './models.js';
 import { parseAlbumHeader, parseMusicInAlbumItem } from './parsers.js';
@@ -9,7 +10,6 @@ export const parseListMusicsFromAlbumBody = (body: any): MusicVideo[] => {
       .sectionListRenderer.contents[0].musicShelfRenderer;
   const songs: MusicVideo[] = [];
   const { thumbnailUrl, artist, album } = parseAlbumHeader(body.header);
-
   contents.forEach((element: any) => {
     try {
       const song = parseMusicInAlbumItem(element);
@@ -27,25 +27,39 @@ export const parseListMusicsFromAlbumBody = (body: any): MusicVideo[] => {
 };
 
 export async function ListMusicVideosFromAlbum(
-  albumId: string
+  albumId: string,
+  proxy: { Host: string; Port: number; UserPass?: string } | undefined
 ): Promise<MusicVideo[]> {
-  const response = await fetch(
-    'https://music.youtube.com/youtubei/v1/browse?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        ...context.body,
-        browseId: albumId,
-      }),
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-        origin: 'https://music.youtube.com',
-      },
-    }
-  );
   try {
-    return parseListMusicsFromAlbumBody(await response.json());
+    const response = await got.post(
+      'https://music.youtube.com/youtubei/v1/browse',
+      {
+        json: {
+          ...context.body,
+          browseId: albumId,
+        },
+        searchParams: {
+          alt: 'json',
+          key: 'AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
+        },
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+          origin: 'https://music.youtube.com',
+        },
+        agent: proxy
+          ? {
+              https: new HttpsProxyAgent({
+                proxy: `http://${
+                  proxy.UserPass ? proxy.UserPass + '@' : ''
+                }${proxy.Host}:${proxy.Port}`,
+              }),
+            }
+          : undefined,
+      }
+    );
+
+    return parseListMusicsFromAlbumBody(JSON.parse(response.body));
   } catch (e) {
     console.error(e);
     return [];

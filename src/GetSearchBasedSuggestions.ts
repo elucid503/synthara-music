@@ -1,4 +1,6 @@
-import fetch from "node-fetch";
+import got from 'got';
+import { HttpsProxyAgent } from 'hpagent';
+
 import { SearchSuggestion, SuggestedTrack, SuggestedAlbum } from "./models.js";
 
 export function ParseSearchSuggestionsResponse(responseData: any): { Suggestions: SearchSuggestion[]; Tracks: SuggestedTrack[]; Albums: SuggestedAlbum[] } {
@@ -69,46 +71,53 @@ export function ParseSearchSuggestionsResponse(responseData: any): { Suggestions
 
 };
       
-export async function GetSearchBasedSuggestions(input: string, context: any): Promise<{ Suggestions: SearchSuggestion[]; Tracks: SuggestedTrack[]; Albums: SuggestedAlbum[] }> {
-  
+export async function GetSearchBasedSuggestions(
+    input: string,
+    context: any,
+    proxy: { Host: string; Port: number; UserPass?: string } | undefined
+  ): Promise<{ Suggestions: SearchSuggestion[]; Tracks: SuggestedTrack[]; Albums: SuggestedAlbum[] }> {
     const requestBody = {
-
-        input,
-    
-        context: {
-        
-            ...context,
-            
-            client: {
-          
-                ...context.client,
-                clientName: 'WEB_REMIX',       
-                clientVersion: '1.20240403.01.00',
-        
-            },
-            
+      input,
+      context: {
+        ...context,
+        client: {
+          ...context.client,
+          clientName: 'WEB_REMIX',
+          clientVersion: '1.20240403.01.00',
         },
-
+      },
     };
-
-    const response = await fetch('https://music.youtube.com/youtubei/v1/music/get_search_suggestions?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL-AF99BVI6E', {
-
-        method: 'POST',
-
-        headers: {
-
+  
+    try {
+      const response = await got.post(
+        'https://music.youtube.com/youtubei/v1/music/get_search_suggestions',
+        {
+          json: requestBody,
+          searchParams: {
+            alt: 'json',
+            key: 'AIzaSyC9XL3ZjWddXya6X74dJoCTL-AF99BVI6E',
+          },
+          headers: {
             'Content-Type': 'application/json',
             'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-        
             origin: 'https://music.youtube.com',
-        
-        },
-
-        body: JSON.stringify(requestBody),
-
-    });
-
-    const responseData = await response.json();
-    return ParseSearchSuggestionsResponse(responseData);
-
+          },
+          agent: proxy
+            ? {
+                https: new HttpsProxyAgent({
+                  proxy: `http://${
+                    proxy.UserPass ? proxy.UserPass + '@' : ''
+                  }${proxy.Host}:${proxy.Port}`,
+                }),
+              }
+            : undefined,
+        }
+      );
+  
+      const responseData = JSON.parse(response.body);
+      return ParseSearchSuggestionsResponse(responseData);
+    } catch (error) {
+      console.error('Error in GetSearchBasedSuggestions:', error);
+      throw error;
+    }
 }
