@@ -57,7 +57,7 @@ export async function SearchForMusicVideos(query: string, proxy?: { Host: string
 
   }
 
-  console.log(inspect(response.data, false, 100, true));
+  console.log(inspect(response.data, false, 5, true));
   
   try {
     return parseSearchMusicsBody(response.data as any);

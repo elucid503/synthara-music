@@ -11,5 +11,5 @@ const proxy =  {
 }
 
 SearchForMusicVideos(query, proxy).then((songs) => {
-  console.log(songs);
+  console.log(songs.length);
 });
