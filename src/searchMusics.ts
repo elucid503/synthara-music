@@ -33,10 +33,12 @@ export async function SearchForMusicVideos(query: string, proxy?: { Host: string
   let response;
 
   try {
-      
-    response = await Axios.post(
-      'https://music.youtube.com/youtubei/v1/search?alt=json',
-      {
+
+    response = await Axios({
+
+      method: 'POST',
+      url: 'https://music.youtube.com/youtubei/v1/search?alt=json',
+      data: {
         ...context.body,
         params: 'EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D',
 
@@ -44,16 +46,14 @@ export async function SearchForMusicVideos(query: string, proxy?: { Host: string
         originalQuery: query,
         searchMethod: "ENTER_KEY",
         validationStatus: "VALID",
-
-        httpsAgent: proxy ? new HttpsProxyAgent(`http://${proxy.UserPass}@${proxy.Host}:${proxy.Port}`) : undefined,
       },
-      {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-          origin: 'https://music.youtube.com',
-        },
-      }
-    );
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+        origin: 'https://music.youtube.com',
+      },
+      httpsAgent: proxy ? new HttpsProxyAgent(`http://${proxy.UserPass}@${proxy.Host}:${proxy.Port}`) : undefined
+
+    })
 
   } catch (e) {
 
