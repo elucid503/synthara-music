@@ -4,6 +4,8 @@ import { MusicVideo } from './models.js';
 import { parseMusicItem } from './parsers.js';
 import context from './context.js';
 
+import { inspect } from 'util';
+
 export const parseSearchMusicsBody = (body: {
   contents: any;
 }): MusicVideo[] => {
@@ -56,7 +58,7 @@ export async function SearchForMusicVideos(query: string, proxy?: { Host: string
   }
   
   console.log(response.status);
-  console.log(response.data)
+  console.log(inspect(response.data, false, 10, true));
 
   try {
     return parseSearchMusicsBody(response.data as any);
