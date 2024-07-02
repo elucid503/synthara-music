@@ -1,10 +1,9 @@
-import Axios from 'axios';
-import { HttpsProxyAgent } from 'https-proxy-agent';
+import got from 'got';
+import { HttpsProxyAgent } from 'hpagent';
+
 import { MusicVideo } from './models.js';
 import { parseMusicItem } from './parsers.js';
 import context from './context.js';
-
-import { inspect } from 'util';
 
 export const parseSearchMusicsBody = (body: {
   contents: any;
@@ -12,9 +11,7 @@ export const parseSearchMusicsBody = (body: {
   const { contents } =
     body.contents.tabbedSearchResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents.pop()
       .musicShelfRenderer;
-
   const results: MusicVideo[] = [];
-
   contents.forEach((content: any) => {
     try {
       const song = parseMusicItem(content);
@@ -29,44 +26,42 @@ export const parseSearchMusicsBody = (body: {
 };
 
 export async function SearchForMusicVideos(query: string, proxy?: { Host: string, Port: number, UserPass?: string }): Promise<MusicVideo[]> {
+  const url = 'https://music.youtube.com/youtubei/v1/search?alt=json';
+  const body = {
+    ...context.body,
+    params: 'EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D',
+    query,
+    originalQuery: query,
+    searchMethod: "ENTER_KEY",
+    validationStatus: "VALID",
+  };
 
-  const response = await fetch('https://music.youtube.com/youtubei/v1/search?alt=json', {
+  const headers = {
+    'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+    'Origin': 'https://music.youtube.com',
+  };
 
+  const options: any = {
     method: 'POST',
-    body: JSON.stringify({
-      ...context.body,
-      params: 'EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D',
+    headers,
+    json: body,
+    responseType: 'json',
+  };
 
-      query,
-      originalQuery: query,
-      searchMethod: "ENTER_KEY",
-      validationStatus: "VALID",
-    }),
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-      origin: 'https://music.youtube.com',
-    },
-        //@ts-ignore
-    proxy: proxy ? `http://${proxy.UserPass ? proxy.UserPass + '@' : ''}${proxy.Host}:${proxy.Port}` : undefined 
-  }).catch((e) => {
-      
-      console.error(e);
-
-  });
-
-  if (!response) {
-
-    return [];
-
+  if (proxy) {
+    options.agent = {
+      https: new HttpsProxyAgent({ proxy: `http://${proxy.UserPass ? proxy.UserPass + '@' : ''}${proxy.Host}:${proxy.Port}` })
+    };
   }
 
-  const Data = await response.json();
-
-  console.log(inspect(Data, false, 5, true));
-  
   try {
-    return parseSearchMusicsBody(Data as any);
-  } catch {
+    const response = await got(url, options);
+
+    console.log(response);
+    
+    return parseSearchMusicsBody(response.body as any);
+  } catch (error) {
+    console.error('Error fetching data:', error);
     return [];
   }
 }
