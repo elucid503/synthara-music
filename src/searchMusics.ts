@@ -1,4 +1,5 @@
-import fetch from 'node-fetch';
+import Axios from 'axios';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 import { MusicVideo } from './models.js';
 import { parseMusicItem } from './parsers.js';
 import context from './context.js';
@@ -25,29 +26,40 @@ export const parseSearchMusicsBody = (body: {
   return results;
 };
 
-export async function SearchForMusicVideos(query: string): Promise<MusicVideo[]> {
-  const response = await fetch(
-    'https://music.youtube.com/youtubei/v1/search?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
-    {
-      method: "POST",
-      body: JSON.stringify({
+export async function SearchForMusicVideos(query: string, proxy?: { Host: string, Port: number, UserPass: string }): Promise<MusicVideo[]> {
+
+  let response;
+
+  try {
+      
+    response = await Axios.post(
+      'https://music.youtube.com/youtubei/v1/search?alt=json&key=AIzaSyC9XL3ZjWddXya6X74dJoCTL-WEYFDNX30',
+      {
         ...context.body,
         params: 'EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D',
         query,
-      }),
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-        origin: 'https://music.youtube.com',
       },
-    }
-  );
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+          origin: 'https://music.youtube.com',
+        },
+        httpsAgent: proxy ? new HttpsProxyAgent(`http://${proxy.UserPass}@${proxy.Host}:${proxy.Port}`) : undefined,
+      }
+    );
 
+  } catch (e) {
+
+    console.error(e);
+    return [];
+
+  }
+  
   console.log(response.status);
-  console.log(await response.text())
+  console.log(response.data)
 
   try {
-    return parseSearchMusicsBody(await response.json() as any);
+    return parseSearchMusicsBody(response.data as any);
   } catch {
     return [];
   }
