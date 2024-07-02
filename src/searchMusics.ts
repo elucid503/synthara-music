@@ -28,44 +28,44 @@ export const parseSearchMusicsBody = (body: {
   return results;
 };
 
-export async function SearchForMusicVideos(query: string, proxy?: { Host: string, Port: number, UserPass: string }): Promise<MusicVideo[]> {
+export async function SearchForMusicVideos(query: string, proxy?: { Host: string, Port: number, UserPass?: string }): Promise<MusicVideo[]> {
 
-  let response;
+  const response = await fetch('https://music.youtube.com/youtubei/v1/search?alt=json', {
 
-  try {
+    method: 'POST',
+    body: JSON.stringify({
+      ...context.body,
+      params: 'EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D',
 
-    response = await Axios({
+      query,
+      originalQuery: query,
+      searchMethod: "ENTER_KEY",
+      validationStatus: "VALID",
+    }),
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+      origin: 'https://music.youtube.com',
+    },
+        //@ts-ignore
+    proxy: proxy ? `http://${proxy.UserPass ? proxy.UserPass + '@' : ''}${proxy.Host}:${proxy.Port}` : undefined 
+  }).catch((e) => {
+      
+      console.error(e);
 
-      method: 'POST',
-      url: 'https://music.youtube.com/youtubei/v1/search?alt=json',
-      data: {
-        ...context.body,
-        params: 'EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D',
+  });
 
-        query,
-        originalQuery: query,
-        searchMethod: "ENTER_KEY",
-        validationStatus: "VALID",
-      },
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-        origin: 'https://music.youtube.com',
-      },
-      httpsAgent: proxy ? new HttpsProxyAgent(`http://${proxy.UserPass}@${proxy.Host}:${proxy.Port}`) : undefined
+  if (!response) {
 
-    })
-
-  } catch (e) {
-
-    console.error(e);
     return [];
 
   }
 
-  console.log(inspect(response.data, false, 5, true));
+  const Data = await response.json();
+
+  console.log(inspect(Data, false, 5, true));
   
   try {
-    return parseSearchMusicsBody(response.data as any);
+    return parseSearchMusicsBody(Data as any);
   } catch {
     return [];
   }
