@@ -43,7 +43,7 @@ export async function SearchForMusicVideos(query: string): Promise<MusicVideo[]>
     }
   );
 
-  console.log(response.statusText);
+  console.log(await response.text());
 
   try {
     return parseSearchMusicsBody(await response.json() as any);
