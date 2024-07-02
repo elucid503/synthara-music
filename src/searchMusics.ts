@@ -42,6 +42,9 @@ export async function SearchForMusicVideos(query: string): Promise<MusicVideo[]>
       },
     }
   );
+
+  console.log(response.statusText);
+
   try {
     return parseSearchMusicsBody(await response.json() as any);
   } catch {
