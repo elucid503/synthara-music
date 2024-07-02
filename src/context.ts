@@ -3,9 +3,9 @@ export default {
     context: {
       capabilities: {},
       client: {
-        clientName: 'WEB_REMIX',
-        clientVersion: '0.1',
-      },
+        'clientName': 'WEB_REMIX',
+        'clientVersion': '1.20220727.01.00',
+    },
     },
   },
 };
