@@ -39,7 +39,12 @@ export async function SearchForMusicVideos(query: string, proxy?: { Host: string
       {
         ...context.body,
         params: 'EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D',
+
         query,
+        originalQuery: query,
+        searchMethod: "ENTER_KEY",
+        validationStatus: "VALID",
+
         httpsAgent: proxy ? new HttpsProxyAgent(`http://${proxy.UserPass}@${proxy.Host}:${proxy.Port}`) : undefined,
       },
       {
