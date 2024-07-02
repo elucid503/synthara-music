@@ -40,13 +40,13 @@ export async function SearchForMusicVideos(query: string, proxy?: { Host: string
         ...context.body,
         params: 'EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D',
         query,
+        httpsAgent: proxy ? new HttpsProxyAgent(`http://${proxy.UserPass}@${proxy.Host}:${proxy.Port}`) : undefined,
       },
       {
         headers: {
           'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
           origin: 'https://music.youtube.com',
         },
-        httpsAgent: proxy ? new HttpsProxyAgent(`http://${proxy.UserPass}@${proxy.Host}:${proxy.Port}`) : undefined,
       }
     );
 
