@@ -1,6 +1,6 @@
 {
   "name": "synthara-music",
-  "version": "2.0.9",
+  "version": "2.1.1",
   "author": "elucid",
   "repository": "https://github.com/elucid503/synthara-music",
   "devDependencies": {
@@ -33,7 +33,9 @@
     "axios": "^1.7.2",
     "got": "^14.4.1",
     "hpagent": "^1.2.0",
+    "https-proxy-agent": "^7.0.5",
     "node-fetch": "^3.3.2",
+    "proxy-agent": "^6.4.0",
     "undici": "^6.19.2"
   }
 }
